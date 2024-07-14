@@ -5,6 +5,7 @@ import br.com.uanderson.api_rest.services.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +26,68 @@ public class OrderController {
     @Operation(
             summary = "Get orders by filter",
             parameters = {
-                    @Parameter(name = "filter", description = "Filter by", required = true),
-                    @Parameter(name = "order_number", description = "Order number"),
-                    @Parameter(name = "since", description = "Since date"),
-                    @Parameter(name = "until", description = "Until date"),
-                    @Parameter(name = "status", description = "Order status"),
-                    @Parameter(name = "customer_email", description = "Customer email", required = true),
+                    @Parameter(name = "filter", description =
+                            """
+                                    <strong>Filter</strong>:
+                                    <ol>
+                                        <li>By order number</li>
+                                        <li>By order date</li>
+                                        <li>By delivery date</li>
+                                        <li>By status</li>
+                                    </ol>
+                                    </ol>
+                                    """, required = true),
+                    @Parameter(name = "order_number", description =
+                            """
+                                    <b>Order number</b>
+                                    <p>Number of the order to filter</p>
+                                    <ul>
+                                        <li>Format: valid order number</li>
+                                    </ul>
+                                    Filter 1.
+                                    """
+                    ),
+                    @Parameter(name = "since", description =
+                            """
+                                    <b>Since date</b>
+                                    <p>Use with order date and delivery date filters</p>
+                                    <ul>
+                                        <li>Format: yyyy-MM-dd HH:mm:ss</li>
+                                    </ul>
+                                    Filter 2 and 3.
+                                                """
+                    ),
+                    @Parameter(name = "until", description =
+                            """
+                                    <b>Until date</b>
+                                    <p>Use with order date and delivery date filters</p>
+                                    <ul>
+                                        <li>Format: yyyy-MM-dd HH:mm:ss</li>
+                                    </ul>
+                                    Filter 2 and 3.
+                                                """
+                    ),
+                    @Parameter(name = "status", description =
+                            """
+                                    <b>Order status</b>
+                                    <p>Possible values:</p>
+                                    <ul>
+                                        <li>DELIVERED</li>
+                                        <li>PENDING</li>
+                                        <li>CANCELED</li>
+                                    </ul>
+                                    Filter 4.
+                                                """
+                    ),
+                    @Parameter(name = "customer_email", description =
+                            """
+                                    <b>Customer email</b>
+                                    <p>Requires for all filters. Orders listed will be related to this email</p>
+                                    <ul>
+                                        <li>Format: valid email</li>
+                                    </ul>
+                                                """
+                            , required = true),
                     @Parameter(name = "page", description = "Page number default 0"),
                     @Parameter(name = "size", description = "Page size default 10")
             },
@@ -38,7 +95,8 @@ public class OrderController {
             responses = {
                     @ApiResponse(responseCode = "500", description = "Internal server erro"),
                     @ApiResponse(responseCode = "200", description = "Request successful")
-            }
+            },
+            security = {@SecurityRequirement(name = "security_auth")}
     )
     public ResponseEntity<OrderResultDTO> getOrdersByFilter(
             @RequestParam(name = "filter", defaultValue = "0") int filter,
@@ -53,7 +111,7 @@ public class OrderController {
 
         try {
             return ResponseEntity.ok(orderService.getOrdersByFilter(
-                            filter, orderNumber, since, until, status, customerEmail,
+                    filter, orderNumber, since, until, status, customerEmail,
                     pageNumber, pageSize)
             );
         } catch (RuntimeException ex) {
