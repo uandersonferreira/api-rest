@@ -1,0 +1,63 @@
+services:
+  ### Postgres database for Products
+  db-udc:
+    container_name: db-udc
+    image: postgres:16.1
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: udc_orders
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: teste@2024
+    ports:
+      - 5432:5432
+    expose:
+      - 5432
+    command: -p 5432
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  ### Postgres database for Keycloak
+  db-udc-keycloak:
+    container_name: db-udc-keycloak
+    image: postgres:16.2
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: db_keycloak
+      POSTGRES_USER: test
+      POSTGRES_PASSWORD: teste@2024
+    ports:
+      - 5433:5433
+    expose:
+      - 5433
+    command: -p 5433
+    volumes:
+      - keycloak-data:/opt/keycloak
+
+  ### Keycloak
+  keycloak-udc:
+    container_name: keycloak-udc
+    image: quay.io/keycloak/keycloak:23.0.5
+    command: [ "start-dev" ]
+    ports:
+      - 8181:8181
+    expose:
+      - 8181
+    depends_on:
+      - db-udc-keycloak
+    environment:
+      DB_VENDOR: POSTGRES
+      DB_ADDR: db-udc-keycloak
+      DB_DATABASE: db_keycloak
+      DB_PORT: 5433
+      DB_USER: test
+      DB_PASSWORD: teste@2024
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_HTTP_PORT: 8181
+      KC_HOSTNAME: localhost
+      KC_HTTP_RELATIVE_PATH: /auth
+    volumes:
+      - keycloak-data:/opt/keycloak
+volumes:
+  db-data:
+  keycloak-data:

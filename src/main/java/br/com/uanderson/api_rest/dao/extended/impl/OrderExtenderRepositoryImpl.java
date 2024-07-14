@@ -1,6 +1,6 @@
-package br.com.uanderson.api_rest.dao.repositories.extended.impl;
+package br.com.uanderson.api_rest.dao.extended.impl;
 
-import br.com.uanderson.api_rest.dao.repositories.extended.OrderExtenderRepository;
+import br.com.uanderson.api_rest.dao.extended.OrderExtenderRepository;
 import br.com.uanderson.api_rest.model.dtos.OrderDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -35,13 +35,12 @@ public class OrderExtenderRepositoryImpl implements OrderExtenderRepository {
                     order.customer as customer                
                 FROM 
                     Order order
-                                
                 WHERE 
-                    (:filter = 1 and order.orderNumber = :orderNumber) OR 
+                    ((:filter = 1 and order.orderNumber = :orderNumber) OR 
                     (:filter = 2 and order.orderDate between :since and :until) OR 
                     (:filter = 3 and order.deliveryDate between :since and :until) OR 
-                    (:filter = 4 and order.status = :status) OR 
-                    (:filter = 5 and order.customer.id = :customerId)
+                    (:filter = 4 and order.status = :status)) AND 
+                    (order.customer.id = :customerId)
                 """;
 
         TypedQuery<OrderDTO> typedQuery = entityManager.createQuery(query, OrderDTO.class)
@@ -69,13 +68,12 @@ public class OrderExtenderRepositoryImpl implements OrderExtenderRepository {
                     count (order.id) as count             
                 FROM 
                     Order order
-                                
                 WHERE 
-                    (:filter = 1 and order.orderNumber = :orderNumber) OR 
+                    ((:filter = 1 and order.orderNumber = :orderNumber) OR 
                     (:filter = 2 and order.orderDate between :since and :until) OR 
                     (:filter = 3 and order.deliveryDate between :since and :until) OR 
-                    (:filter = 4 and order.status = :status) OR 
-                    (:filter = 5 and order.customer.id = :customerId)
+                    (:filter = 4 and order.status = :status)) AND 
+                    (order.customer.id = :customerId)
                 """;
 
         TypedQuery<Long> typedQuery = entityManager.createQuery(query, Long.class)

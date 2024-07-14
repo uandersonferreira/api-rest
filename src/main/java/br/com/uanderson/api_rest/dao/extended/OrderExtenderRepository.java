@@ -1,4 +1,4 @@
-package br.com.uanderson.api_rest.dao.repositories.extended;
+package br.com.uanderson.api_rest.dao.extended;
 
 import br.com.uanderson.api_rest.model.dtos.OrderDTO;
 

@@ -1,6 +1,6 @@
 package br.com.uanderson.api_rest.dao.repositories;
 
-import br.com.uanderson.api_rest.dao.repositories.extended.OrderExtenderRepository;
+import br.com.uanderson.api_rest.dao.extended.OrderExtenderRepository;
 import br.com.uanderson.api_rest.model.entities.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
